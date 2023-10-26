@@ -1,115 +1,86 @@
 ---
-title: "Angular 15: Using The Directive Composition API"
-description: >-
-  The directive composition API is a new feature released in Angular 15. It
-  allows us to reuse the directive's code with components and even other
-  directives.
-pubDatetime: 2022-11-02T11:00:00.000Z
-postSlug: "angular-15:-using-the-directive-composition-api"
+title: "Creating scalable parameterized functions"
+description: "How to create scalable function that uses many parameters"
+pubDatetime: 2023-10-26T20:40:00.000Z
 tags:
-  - angular
+  - javascript
+  - typescript
+  - refactoring
 draft: false
 feature: false
-ogImage: "@assets/images/lucas-kapla-wqlagv4_oys-unsplash.jpg"
-canonicalURL: "https://www.henriquecustodia.dev/posts/angular-15:-using-the-directive-composition-api/"
+ogImage: "@assets/images/creating-scalable-parameterized-functions.png"
 ---
 
-![lucas-kapla-wqlagv4_oys-unsplash.jpg](@assets/images/lucas-kapla-wqlagv4_oys-unsplash.jpg)
+![creating-scalable-parameterized-functions.png](@assets/images/creating-scalable-parameterized-functions.png)
 
-Angular v15 will be released pretty soon, and it's coming with a very nice feature called **Directive Composition API**.
+Functions with many parameters are difficult to use and understand. In this post, I want to show you how to refactor this kind of function in a more simple and scalable way.
 
 ## Table of contents
 
-## But, what is it? 🤔
+## Ugly function signature
 
-The Directive Composition API allows us to compose directives into components and other directives.
+As an example, I will use the following function:
 
-This API works only with standalone components (and standalone directives). As the 14 version added the standalone property, the 15 version added a **hostDirectives** property.
+```js
+function myFunction(value, option1, option2, option3) {
+  // do something
+}
 
-Let's see how to use this property.
 
-The example below shows a directive called **BoxDirective**, that sets some styles to the **AppComponent** using the **Composition API**:
+myFunction(30, null null, 'errorMessage');
+```
 
-![](@assets/images/raycast-untitled.png)
+> In this case `null` values mean that the parameter should be ignored for the function.
 
-![](@assets/images/raycast-untitled-1.png)
+I remember that kind of function being very common in the JQuery age. Maybe because JavaScript was never so used as nowadays.
 
-The result will be:
+Notice that the parameters' function are difficult to understand. I would need to open the function code to see what each parameter is supposed to do.
 
-![](@assets/images/result1.PNG)
+I will refactor it in a more readable way.
 
-We can use this new API to reuse a lot of code. It's amazing.
+## Refactoring the ugly function signature
 
-## Exposing the directive's input
+Generally, a function should expect just one or two essential parameters (generally just one).
 
-When adding Inputs and Outputs to a directive, we need to expose those to the component to be able to use them. There are the **input** and **output** in the **hostDirectives** property because of it.
+In the case of the `myFunction` function, the essential parameter is `value`. The other parameters are just options that will be used to customize the behavior of the function.
 
-The following example adds an Input property to the BoxDirective.
+Well, I will use an object as a second parameter to set the option values that the function accepts.
 
-![](@assets/images/raycast-untitled-2.png)
+```js
+function myFunction(value, { option1, option2, option3 }) {
+  // do something
+}
 
-And we'll add the **color input** to the inputs array to expose it to the component.
+myFunction(30, { option3: "errorMessage" });
+```
 
-![](@assets/images/raycast-untitled-3.png)
+Now, I do not need to pass `null` values to the function when I want the parameter to be ignored. Instead, I just pass an object with the option values that the function should use.
 
-That way we can set a color to the **BoxDirective**
+## Typed way
 
-![](@assets/images/raycast-untitled-4.png)
+TypeScript is great for defining functions like that. I will refactor `myFunction` to use TypeScript interfaces.
 
-The result will be:
+```ts
+interface MyFunctionProps {
+  option1: boolean;
+  option2: boolean;
+  option3: string;
+}
 
-![](@assets/images/result2.PNG)
+function myFunction(
+  value: number,
+  { option1, option2, option3 }: MyFunctionProps
+) {
+  // do something
+}
 
-It's possible to rename the exposed input's name - generally useful when we have directives' inputs with the same name.
+myFunction(30, { option3: "errorMessage" });
+```
 
-![](@assets/images/raycast-untitled-5.png)
+Interfaces match very well with this kind of function.
 
-Using the renamed property:
+## Thank you!
 
-![](@assets/images/raycast-untitled-6.png)
+Thank you for reading up to this point, and I hope this article is as useful to you as it is to me.
 
-## Exposing the directive's output
-
-To expose outputs as easily as with inputs. But there's a property called **outputs** specifically for it.
-
-![](@assets/images/raycast-untitled-7.png)
-
-![](@assets/images/raycast-untitled-8.png)
-
-Using it
-
-![](@assets/images/raycast-untitled-9.png)
-
-In the same way as inputs, it's possible to rename the output's name.
-
-![](@assets/images/raycast-untitled-10.png)
-
-![](@assets/images/raycast-untitled-11.png)
-
-## Bonus: OnDestroyDirective 💎
-
-Let's create a reusable directive to destroy old subscriptions.
-
-The following code creates a timer component that uses an interval operator to log an incremental number every second. To avoid memory leaks, it's a good practice to remove observable subscriptions when a component has been destroyed. The **OnDestroyDirective** will remove the interval subscription automatically after the timer component is destroyed.
-
-![](@assets/images/raycast-untitled-12.png)
-
-![](@assets/images/raycast-untitled-13.png)
-
-The result will be:
-
-![](@assets/images/2022-11-01-23-32-47.gif)
-
-## 👨‍💻
-
-You can check out the code of this post [here](https://stackblitz.com/edit/ng-15-directive-composition-api?file=README.md).
-
-## That's all!
-
-I've spent some time writing this post, then, I hope that you enjoyed it!
-
-If you liked it, give some claps/likes to this post or share it with your friends!
-
-Thank you for the reading. 😄
-
-See you! 👋🏼
+Until the next time!
