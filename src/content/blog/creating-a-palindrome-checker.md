@@ -63,6 +63,8 @@ export function isPalindrome(word: string): boolean {
 }
 ```
 
+> You can find the repositories' code [here](https://github.com/henriquecustodia/palindrome).
+
 ## Explaining the code
 
 I don't think I need to explain every single line of the code above, but it's important to highlight some important things about.
