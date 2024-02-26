@@ -39,11 +39,12 @@ After this brief explanation of what's a palindrome, here's how the function to 
 
 ```ts
 const toLowerCase = (word: string) => word.toLocaleLowerCase();
-const removeWhitespaces = (word: string) => word.replace(/ /g, "");
+const removeNonAlphanumerics = (word: string) =>
+  word.replace(/[^a-zA-Z0-9]/g, "");
 const toArray = (word: string) => word.split("");
 
 export function isPalindrome(word: string): boolean {
-  const wordAsArray = toArray(removeWhitespaces(toLowerCase(word)));
+  const wordAsArray = toArray(removeNonAlphanumerics(toLowerCase(word)));
 
   const middleIndex = Math.floor(wordAsArray.length / 2) - 1;
 
@@ -75,10 +76,11 @@ First of all, you need to transform every character to lowercase.
 const toLowerCase = (word: string) => word.toLocaleLowerCase();
 ```
 
-You need remove all the whitespace of the string to have sure that all the compared characters will be always letters and not spaces.
+You need to remove all non-alphanumeric characters from the string to ensure that all compared characters consist only of letters or numbers.
 
 ```ts
-const removeWhitespaces = (word: string) => word.replace(/ /g, "");
+const removeNonAlphanumerics = (word: string) =>
+  word.replace(/[^a-zA-Z0-9]/g, "");
 ```
 
 After that you need to convert the string to an array.
